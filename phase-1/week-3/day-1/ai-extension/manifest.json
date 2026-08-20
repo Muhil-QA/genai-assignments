@@ -1,0 +1,50 @@
+{
+
+
+    "manifest_version": 3,
+    "name": "AI Browser Extension for Code Generation",
+    "version": "1.0",
+    "description": "Test automation code generator",
+    "permissions": [
+        "storage",
+        "activeTab",
+        "scripting",
+        "tabs",
+        "sidePanel"
+    ],
+    "host_permissions": [
+        "<all_urls>"
+    ],
+    "action": {
+        "default_title": "Extension for AI Code Generation",
+        "default_icon": {
+            "16": "assets/images/hush.png",
+            "32": "assets/images/hush.png",
+            "48": "assets/images/hush.png",
+            "128": "assets/images/hush.png"
+        }
+    },
+    "icons": {
+        "16": "assets/images/hush.png",
+        "32": "assets/images/hush.png",
+        "48": "assets/images/hush.png",
+        "128": "assets/images/hush.png"
+    },
+    "side_panel": {
+        "default_path": "panel.html"
+    },
+    "background": {
+        "service_worker": "bg.js"
+    },
+    "web_accessible_resources": [{
+        "resources": [
+            "lib/marked/marked.min.js",
+            "lib/prism/prism.js",
+            "lib/prism/prism-typescript.js",
+            "lib/prism/prism-tomorrow.css",
+            "src/content/content.js",
+            "lib/css/all.min.css"
+        ],
+        "matches": ["<all_urls>"]
+    }]
+}
