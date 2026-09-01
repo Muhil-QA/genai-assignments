@@ -1,0 +1,155 @@
+{
+  "name": "Document QA Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "fileSelector": "C:\\Users\\CBT\\.n8n-files\\Home Assignment 30.08.26.txt",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.readWriteFile",
+      "typeVersion": 1.1,
+      "position": [
+        -224,
+        -48
+      ],
+      "id": "e1e6d63b-f896-45a6-bd63-80744cdb14ce",
+      "name": "Read/Write Files from Disk"
+    },
+    {
+      "parameters": {
+        "operation": "text",
+        "destinationKey": "text",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.extractFromFile",
+      "typeVersion": 1.1,
+      "position": [
+        0,
+        -48
+      ],
+      "id": "5a78d72c-0847-4056-be2f-768cd0f42693",
+      "name": "Extract from File"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "messages": {
+          "messageValues": [
+            {
+              "message": "=You are an expert Document QA assistant. Answer the user's question STRICTLY using only the provided document text below. If the requested information is not available in the document, respond with: \"The requested information is not available in the uploaded document.\" Do not use outside knowledge.\n\n--- DOCUMENT TEXT START ---\n{{ $('Extract from File').item.json.text }}\n--- DOCUMENT TEXT END ---\n\nUser Question: {{ $('Manual Trigger').item.json.question }}"
+            }
+          ]
+        },
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        224,
+        -48
+      ],
+      "id": "d8725bbc-fcc7-435b-bbe9-6c4204ddcea4",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        160,
+        160
+      ],
+      "id": "94d46735-8e4e-4dd6-96b5-e1626969d068",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "8S1iLJVdykPCBeUd",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -448,
+        -48
+      ],
+      "id": "9046d542-028b-4f73-b998-98be32194826",
+      "name": "Manual Trigger"
+    }
+  ],
+  "pinData": {
+    "Manual Trigger": [
+      {
+        "json": {
+          "question": "What is the store opening and closing time mentioned in the document?"
+        }
+      }
+    ]
+  },
+  "connections": {
+    "Read/Write Files from Disk": {
+      "main": [
+        [
+          {
+            "node": "Extract from File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Extract from File": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Read/Write Files from Disk",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "4a864050-789c-472b-b7da-fc61be89f267",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0a48887b1c1c0a75a1b55251a7fc75745c2d7714eb9801d9e13abccafcd3f1f1"
+  },
+  "nodeGroups": [],
+  "id": "cLVUMQHAK9sNUT5F",
+  "tags": []
+}

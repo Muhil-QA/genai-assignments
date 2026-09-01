@@ -1,0 +1,183 @@
+{
+  "name": "AI Customer Feedback Sentiment Analysis & Escalation",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "customer-feedback",
+        "options": {}
+      },
+      "id": "1",
+      "name": "Webhook - Customer Feedback",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "keepOnlySet": true,
+        "values": {
+          "string": [
+            {
+              "name": "customer_id",
+              "value": "={{ $json.body.customer_id }}"
+            },
+            {
+              "name": "customer_email",
+              "value": "={{ $json.body.customer_email }}"
+            },
+            {
+              "name": "feedback_text",
+              "value": "={{ $json.body.feedback_text }}"
+            },
+            {
+              "name": "received_at",
+              "value": "={{ $now.toISOString() }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2",
+      "name": "Edit Fields (Set)",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 2,
+      "position": [
+        480,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "chat",
+        "model": "gpt-4o-mini",
+        "messages": {
+          "values": [
+            {
+              "role": "system",
+              "content": "You are a sentiment analysis assistant. Analyze the feedback text and output JSON with two keys: 'sentiment' (POSITIVE, NEUTRAL, or NEGATIVE) and 'summary' (a 1-sentence summary)."
+            },
+            {
+              "role": "user",
+              "content": "={{ $json.feedback_text }}"
+            }
+          ]
+        }
+      },
+      "id": "3",
+      "name": "OpenAI - Sentiment Analysis",
+      "type": "@n8n/n8n-nodes-langchain.openAi",
+      "typeVersion": 1,
+      "position": [
+        700,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "string": [
+            {
+              "value1": "={{ $json.message.content.sentiment }}",
+              "value2": "NEGATIVE"
+            }
+          ]
+        }
+      },
+      "id": "4",
+      "name": "If - Negative Sentiment?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 1,
+      "position": [
+        920,
+        300
+      ]
+    },
+    {
+      "parameters": {
+        "channel": "#customer-escalations",
+        "text": "=\ud83d\udea8 *Urgent Negative Customer Feedback Alert*\n*Customer:* {{ $('Edit Fields (Set)').item.json.customer_email }}\n*Feedback:* \"{{ $('Edit Fields (Set)').item.json.feedback_text }}\"\n*AI Summary:* {{ $json.message.content.summary }}"
+      },
+      "id": "5",
+      "name": "Slack - Urgent Alert",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 1,
+      "position": [
+        1150,
+        180
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "sheetId": "1A2B3C4D5E6F",
+        "range": "FeedbackLog!A:E",
+        "options": {}
+      },
+      "id": "6",
+      "name": "Google Sheets - Log Feedback",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4,
+      "position": [
+        1150,
+        420
+      ]
+    }
+  ],
+  "connections": {
+    "Webhook - Customer Feedback": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields (Set)",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields (Set)": {
+      "main": [
+        [
+          {
+            "node": "OpenAI - Sentiment Analysis",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenAI - Sentiment Analysis": {
+      "main": [
+        [
+          {
+            "node": "If - Negative Sentiment?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If - Negative Sentiment?": {
+      "main": [
+        [
+          {
+            "node": "Slack - Urgent Alert",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Google Sheets - Log Feedback",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}
