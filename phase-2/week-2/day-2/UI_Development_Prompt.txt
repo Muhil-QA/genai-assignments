@@ -1,0 +1,31 @@
+Act as a Principal Frontend Engineer and Lead UI/UX Designer at Codeboard Technology.
+
+Create a single-page, enterprise-grade AI GitHub Code Reviewer web dashboard titled "Codeboard Sentinel AI".
+
+System & Branding Requirements:
+1. Brand Identity:
+   - Organization: Codeboard Technology
+   - App Title: Codeboard Sentinel AI — Enterprise GitHub Code Reviewer
+   - Logo Mark: Custom SVG featuring the iconic Codeboard <|> mark with a cyan/sky-blue glowing pulse effect.
+   - Primary Theme: Obsidian Dark background (#0B0F19), Glassmorphism surfaces (#111827 with #1F2937 borders), Codeboard Sky Blue (#00A3FF) accents, and Cyan (#00E5FF) highlights.
+   - Typography: Google Fonts "Plus Jakarta Sans" for general UI and "Fira Code" for monospace code snippets.
+
+2. UI Layout Structure:
+   - Top Header: Sticky glassmorphism header containing the glowing <|> logo, Codeboard Technology branding, "n8n Engine: Active" live status pill, and environment tags.
+   - 2-Column Dashboard Grid:
+     * Left Column (Control Sidebar): GitHub PR / Repo URL field, Review Scope dropdown ("Full OWASP Security Audit", "Code Quality & Cleanliness", "Performance Optimization"), Raw Code snippet textarea, and a prominent "Run Sentinel Analysis" action button with hover shimmer effects.
+     * Right Column (Workspace Canvas): Metrics summary cards at top (Code Health, Security Risks, Performance Score), followed by a spacious AI analysis output panel with a terminal placeholder state when idle.
+   - Footer: Corporate footer with "© 2026 Codeboard Technology Ltd. All Rights Reserved | v2.4.0-release".
+
+3. Dynamic UI Behavior & Logic:
+   - Validation: If both URL and Raw Code fields are empty, shake the control card and display a styled red warning message.
+   - Loading State: When analysis is triggered, lock form inputs, display an animated glowing cyber ring spinner with a vertical scan-line overlay, and cycle status messages ("Parsing git diff...", "Auditing security vulnerabilities...", "Generating refactoring advice...") every 1.5 seconds.
+   - Webhook Communication: Perform an async POST request sending payload JSON:
+     {
+       "repo_url": "<user_input>",
+       "review_scope": "<selected_scope>",
+       "raw_code": "<user_code>"
+     }
+   - Response Rendering: Parse incoming AI markdown into styled HTML section headers, code containers, and structured markdown tables with alternating row shading. Pop up a green "REVIEW COMPLETE" badge when finished.
+
+Deliver a single, complete, production-ready index.html file containing all HTML structure, CSS styles, and vanilla JavaScript logic.

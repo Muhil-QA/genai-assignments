@@ -1,0 +1,170 @@
+{
+  "name": "github-code-reviewer",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "github-code-reviewer",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -720,
+        -48
+      ],
+      "id": "1b3f9fec-04e4-4623-87b2-464f18842a26",
+      "name": "Webhook",
+      "webhookId": "07a25026-f117-4373-9c66-cb3c2c0a5711"
+    },
+    {
+      "parameters": {
+        "url": "={{ $json.body.repo_url.includes('/pull/') ? $json.body.repo_url.replace(/\\/$/, '') + '.diff' : $json.body.repo_url.includes('/tree/') ? 'https://api.github.com/repos/' + $json.body.repo_url.split('/')[3] + '/' + $json.body.repo_url.split('/')[4] + '/contents/' + $json.body.repo_url.split('/tree/')[1].split('/').slice(1).join('/') : 'https://api.github.com/repos/' + $json.body.repo_url.split('/')[3] + '/' + $json.body.repo_url.split('/')[4] + '/commits' }}",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "User-Agent",
+              "value": "n8n-code-reviewer"
+            }
+          ]
+        },
+        "options": {
+          "response": {
+            "response": {
+              "responseFormat": "text"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -432,
+        -48
+      ],
+      "id": "8539eb9b-6af9-4bc0-b14a-fba250bf39bd",
+      "name": "HTTP Request",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "HMGC8ajFEoShK8yS",
+          "name": "Header Auth account"
+        }
+      },
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=User prompt:\nFor this given Input as GitHub Code / PR Diff, follow these:\n\nCode / Pull Request Diff to Review:\n{{ $json.data || $('Webhook').item.json.body.raw_code }}\n\nAnalyze the above code changes and provide the review exactly in the requested format.\n\nInstructions:\nYou are an expert AI assistant specialized in Senior Software Engineering, DevSecOps, and Code Quality Assurance.\nYour task is to analyze and review the uploaded code/PR diff based on multiple quality dimensions and provide:\n- Individual parameter scores (each out of 20)\n- Overall quality score (out of 100)\n- Specific improvement recommendations for each weak parameter\n\nEvaluate the code against the following five parameters:\n1. Code Quality & Syntax: Is the code clean, readable, well-formatted, and adhering to language best practices?\n2. Security & Vulnerability: Are there potential security risks, unhandled input sanitization, or exposed secrets/credentials?\n3. Performance & Efficiency: Are there inefficient algorithms, memory leaks, unoptimized loops, or blocking I/O calls?\n4. Maintainability & Structure: Is the code modular, easy to refactor, well-commented, and free of unnecessary duplicate logic?\n5. Error Handling & Edge Cases: Are exceptions properly caught, edge cases validated, and meaningful error messages returned?\n\nFinally, provide an overall rating and improvement summary.\n\nContext:\nThe input code belongs to an enterprise project repository.\nAssume that this review will be read by cross-functional technical teams (Developers, QA Engineers, Security Leads, and Tech Leads) during continuous integration (CI) pull request workflows.\nThe goal is to ensure high-performance, secure, maintainable, and bug-free code before merging into production branches.\n\nOutput should be a Markdown table.\n\nExample:\nExample Input (Code Snippet):\nasync function getUserData(req, res) {\n    let query = \"SELECT * FROM users WHERE id = \" + req.params.id;\n    let user = await db.query(query);\n    res.send(user);\n}\n\nExample Output:\nParameter\tDescription\tScore (out of 20)\nCode Quality & Syntax\tCode is clean and concise, but variable naming and explicit typing could be improved.\t15\nSecurity & Vulnerability\tCritical SQL Injection risk due to un-sanitized string concatenation in the database query.\t4\nPerformance & Efficiency\tNon-blocking database query used, but lacks caching for frequent lookups.\t16\nMaintainability & Structure\tSimple function layout, but database interaction logic should be decoupled into a service layer.\t14\nError Handling & Edge Cases\tNo try-catch block to handle database downtime or non-existent user IDs.\t6\n\nOverall Score: 55 / 100\n\nImprovement Areas:\n- Replace raw SQL string concatenation with parameterized queries or an ORM to fix the SQL Injection vulnerability.\n- Wrap the database operation in a try-catch block and return standard HTTP status codes (e.g., 404 for Not Found, 500 for Internal Error).\n- Move database interaction queries into a dedicated repository/service file to maintain separation of concerns.\n\nPersona:\nYou are acting as a Principal Software & Security Architect with 12+ years of experience in enterprise backend systems, cloud security, automated CI/CD pipelines, and application performance tuning.\nYou are skilled in reviewing pull requests for security vulnerabilities, code smells, architectural elegance, and overall quality.\n\nT – Tone:\nProfessional, technical, and constructive — similar to a senior tech lead conducting a formal pull request review.\nAvoid generic feedback; emphasize actionable, code-specific, and security-focused improvements with code refactoring suggestions where appropriate.",
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        -176,
+        -48
+      ],
+      "id": "2f903655-cf8e-4e71-b6c3-334e9e7a59a4",
+      "name": "Basic LLM Chain"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-120b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -176,
+        160
+      ],
+      "id": "96b92c4c-4c74-4bbf-b2b6-3bd8df6a12d7",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "8S1iLJVdykPCBeUd",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ {\n  \"review\": $json.text\n} }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.5,
+      "position": [
+        192,
+        -48
+      ],
+      "id": "81a58679-dd65-46f4-9bfd-00dfec8d96cf",
+      "name": "Respond to Webhook"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Webhook": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Respond to Webhook",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "c2a3a050-460b-4ffc-9e7b-fff458461b97",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0a48887b1c1c0a75a1b55251a7fc75745c2d7714eb9801d9e13abccafcd3f1f1"
+  },
+  "nodeGroups": [],
+  "id": "5vMWHiyBl4ryPDTW",
+  "tags": []
+}
