@@ -1,0 +1,274 @@
+{
+  "name": "Sub flow Testcase converter",
+  "nodes": [
+    {
+      "parameters": {
+        "inputSource": "passthrough"
+      },
+      "type": "n8n-nodes-base.executeWorkflowTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -640,
+        -112
+      ],
+      "id": "5bd15ece-d53d-41df-9ba8-37971d67b11f",
+      "name": "When Executed by Another Workflow"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        -448,
+        -112
+      ],
+      "id": "d104d894-4be5-447d-8973-4a12478ced60",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Retrieve historical items produced across ALL iterations of the Loop node\nconst loopData = $('Loop Over Items').all();\n\n// Map through each loop iteration item and extract its binary and json data\nreturn loopData.map(item => {\n  return {\n    json: item.json,\n    binary: item.binary\n  };\n});"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        -208,
+        -128
+      ],
+      "id": "67615978-8819-44c6-b06b-e92964d22f8e",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "url": "={{$json.url}}",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3.raw"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -208,
+        32
+      ],
+      "id": "3f4086f8-e192-4adf-a5fd-a45479ed0c4e",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('HTTP Request').item.json.data || $json.data }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "### P - PERSONA\nYou are a Principal Test Automation Architect who is an expert in both legacy Java Selenium (TestNG, POM, DataProvider) and modern Playwright TypeScript automation frameworks. You specialize in migrating legacy enterprise test suites to modern, fixture-driven Playwright structures without losing test intent, coverage, or metadata.\n\n---\n\n### I - INSTRUCTION\nYour task is to convert a legacy Java Selenium TestNG test case into a Playwright TypeScript spec file that fully adheres to our target project's framework conventions.\n\nKey Rules to follow during conversion:\n1. Fixture Injection: Replace explicit Page Object instantiations (new LoginPage()) with custom fixtures destructured inside the test function signature (e.g., { SalesforceLogin, SalesforceHome, SalesforceLead }).\n2. Metadata Annotations: Map TestNG metadata (@BeforeTest, testcaseName, testDescription) into Playwright's test.info().annotations.push({ type: 'TestCase', description: '...' }).\n3. Async Execution: Ensure all framework page object method calls are properly awaited using await.\n4. No Direct Page/Browser Calls: Do not use page.locator() directly in the spec file. Interact strictly through custom page object fixture methods.\n5. Strict Output Constraint: Return ONLY valid TypeScript code inside standard typescript code blocks. Do not add any conversational text, greetings, notes, or explanations before or after the code block.\n\n---\n\n### C - CONTEXT\nWe are migrating our legacy Java Selenium + TestNG + Page Object Model test suite into a custom Playwright TypeScript automation framework (SonicFramework). \n\nIn our new Playwright architecture:\n- Page Objects are injected via custom test fixtures (../customFixtures/salesForceFixture).\n- Test metadata is added via test.info().annotations.\n- Data dynamic generation relies on helper utilities like FakerData (../helpers/fakerUtils).\n\n---\n\n### E - EXAMPLE\n\n#### Input (Legacy Java Selenium TestNG Test Case):\npackage com.salesforce.testcases;\n\nimport org.testng.annotations.BeforeTest;\nimport org.testng.annotations.Test;\nimport com.framework.testng.api.base.ProjectSpecificMethods;\nimport com.salesforce.pages.LoginPage;\n\npublic class TC_01 extends ProjectSpecificMethods {\n    @BeforeTest\n    public void setValues() {\n        excelFileName=\"Login\";\n        testcaseName=\"Login for salesforce application\";\n        testDescription=\"Login with positive credentials\";\n        authors=\"saran\";\n        category=\"smoke\";\n    }\n    \n    @Test(dataProvider=\"fetchData\")\n    public void runLogin(String uName, String pwd) {\n        LoginPage lp = new LoginPage();\n        lp.enterUname(uName)\n          .enterPwd(pwd)\n          .clickLogin();\n    }\n}\n\n#### Output (Target Playwright TypeScript Test Case):\nimport { test } from \"../customFixtures/salesForceFixture\";\nimport { FakerData } from \"../helpers/fakerUtils\";\n\nlet firstName = FakerData.getFirstName();\n\ntest.use({ storageState: \"logins/salesforceLogin.json\" });\n\ntest(`Creating Lead`, async ({ SalesforceLogin, SalesforceHome, SalesforceLead }) => {\n    test.info().annotations.push(\n        { type: 'TestCase', description: 'Creating Lead' },\n    );\n\n    await SalesforceLogin.salesforceLogin(\"ADMINLOGIN\");\n    await SalesforceHome.appLauncher();\n    await SalesforceHome.viewAll();\n    await SalesforceHome.searchApp(\"Leads\");\n    await SalesforceHome.selectApp(\"Leads\");\n    await SalesforceLead.newButton();\n    await SalesforceLead.salutation(\"Mr.\");\n    await SalesforceLead.firstName(firstName);\n    await SalesforceLead.lastName(FakerData.getLastName());\n    await SalesforceLead.Company(FakerData.randomCityName());\n    await SalesforceLead.saveButton();\n    await SalesforceLead.verifiTheLeadAccount(firstName);\n});\n\n---\n\n### [INPUT DATA]\n- File Path: {{ $('Loop Over Items').item.json.path }}\n- Source Code:\n{{ $json.data \\vert{}\\vert{}$json.content }}"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        16,
+        32
+      ],
+      "id": "20333042-d53b-4663-9fe7-f05d966b7bc8",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        -128,
+        240
+      ],
+      "id": "806ba90c-ea16-4d60-a50a-94f80c952e85",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "7irAL28yZX9ArTli",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "output",
+        "options": {
+          "fileName": "={{ $('Loop Over Items').item.json.path.split('/').pop().replace('.java', '') }}.txt"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        384,
+        32
+      ],
+      "id": "74dc3197-4c72-4587-ae02-7130b00310a7",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "amount": 40
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        576,
+        32
+      ],
+      "id": "697fc1be-f805-424f-b7d5-94595e52d10d",
+      "name": "Wait",
+      "webhookId": "fe23e593-c28d-4f9f-9a33-436eb3498c93"
+    },
+    {
+      "parameters": {
+        "modelName": "models/gemini-2.5-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        -32,
+        336
+      ],
+      "id": "2daa0de0-b96f-48d9-9b11-cd6ba16cb605",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "16UW3jgz4XnlsvWq",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "When Executed by Another Workflow": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        []
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "a2be0747-21ff-4f16-9b41-b8b0e73623ac",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0d6f26d858fe2a71f24d315ae737850abe430614bcc8b7de86dd4a63bcdb7656"
+  },
+  "nodeGroups": [],
+  "id": "EgePDIw9L0tjlAVX",
+  "tags": []
+}
