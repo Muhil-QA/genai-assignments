@@ -1,7 +1,0 @@
-node_modules/
-dist/
-.env
-*.log
-backend/uploads/
-backend/generated/
-.DS_Store
