@@ -1,0 +1,179 @@
+{
+  "summary": {
+    "totalTestCases": 5,
+    "positive": 1,
+    "negative": 1,
+    "boundary": 1,
+    "authentication": 0,
+    "authorization": 0,
+    "validation": 1,
+    "error-handling": 1,
+    "standardTestTypes": {
+      "Smoke": 1,
+      "Sanity": 0,
+      "Regression": 4,
+      "Functional": 5,
+      "Integration": 0,
+      "End-to-End": 0,
+      "API/Contract": 5,
+      "Validation": 1,
+      "Negative": 1,
+      "Boundary": 1,
+      "Security": 0,
+      "Performance": 0,
+      "Compatibility": 0,
+      "Usability": 0,
+      "Exploratory": 0
+    }
+  },
+  "testCases": [
+    {
+      "testCaseId": "TC-API-001",
+      "endpoint": "/booking/{id}",
+      "method": "GET",
+      "category": "positive",
+      "title": "Retrieve existing booking with valid ID",
+      "priority": "High",
+      "preconditions": [
+        "A booking with ID 1 exists."
+      ],
+      "headers": {
+        "Accept": "application/json"
+      },
+      "pathParameters": {
+        "id": 1
+      },
+      "queryParameters": {},
+      "steps": [
+        "Send a GET request to /booking/1."
+      ],
+      "expectedStatusCode": 200,
+      "expectedResult": "API returns HTTP 200 with booking details.",
+      "sourceReferences": [
+        "paths./booking/{id}.get"
+      ],
+      "standardTestTypes": [
+        "Smoke",
+        "Functional",
+        "API/Contract"
+      ]
+    },
+    {
+      "testCaseId": "TC-API-002",
+      "endpoint": "/booking/{id}",
+      "method": "GET",
+      "category": "negative",
+      "title": "Request non‑existent booking ID",
+      "priority": "High",
+      "preconditions": [],
+      "headers": {
+        "Accept": "application/json"
+      },
+      "pathParameters": {
+        "id": 9999
+      },
+      "queryParameters": {},
+      "steps": [
+        "Send a GET request to /booking/9999."
+      ],
+      "expectedStatusCode": 404,
+      "expectedResult": "API returns HTTP 404 indicating booking not found.",
+      "sourceReferences": [
+        "paths./booking/{id}.get"
+      ],
+      "standardTestTypes": [
+        "Regression",
+        "Functional",
+        "API/Contract",
+        "Negative"
+      ]
+    },
+    {
+      "testCaseId": "TC-API-003",
+      "endpoint": "/booking/{id}",
+      "method": "GET",
+      "category": "boundary",
+      "title": "Retrieve booking with boundary ID value 0",
+      "priority": "Medium",
+      "preconditions": [],
+      "headers": {
+        "Accept": "application/json"
+      },
+      "pathParameters": {
+        "id": 0
+      },
+      "queryParameters": {},
+      "steps": [
+        "Send a GET request to /booking/0."
+      ],
+      "expectedStatusCode": 404,
+      "expectedResult": "API returns HTTP 404 as ID 0 is outside typical range.",
+      "sourceReferences": [
+        "paths./booking/{id}.get"
+      ],
+      "standardTestTypes": [
+        "Regression",
+        "Functional",
+        "API/Contract",
+        "Boundary"
+      ]
+    },
+    {
+      "testCaseId": "TC-API-004",
+      "endpoint": "/booking/{id}",
+      "method": "GET",
+      "category": "validation",
+      "title": "Provide non‑integer ID value",
+      "priority": "Medium",
+      "preconditions": [],
+      "headers": {
+        "Accept": "application/json"
+      },
+      "pathParameters": {
+        "id": "abc"
+      },
+      "queryParameters": {},
+      "steps": [
+        "Send a GET request to /booking/abc."
+      ],
+      "expectedStatusCode": 404,
+      "expectedResult": "API returns HTTP 404 due to invalid path parameter type.",
+      "sourceReferences": [
+        "paths./booking/{id}.get"
+      ],
+      "standardTestTypes": [
+        "Regression",
+        "Functional",
+        "API/Contract",
+        "Validation"
+      ]
+    },
+    {
+      "testCaseId": "TC-API-005",
+      "endpoint": "/booking/{id}",
+      "method": "GET",
+      "category": "error-handling",
+      "title": "Omit required path parameter ID",
+      "priority": "Low",
+      "preconditions": [],
+      "headers": {
+        "Accept": "application/json"
+      },
+      "pathParameters": {},
+      "queryParameters": {},
+      "steps": [
+        "Send a GET request to /booking/ without providing ID."
+      ],
+      "expectedStatusCode": 404,
+      "expectedResult": "API returns HTTP 404 because the required path parameter is missing.",
+      "sourceReferences": [
+        "paths./booking/{id}.get"
+      ],
+      "standardTestTypes": [
+        "Regression",
+        "Functional",
+        "API/Contract"
+      ]
+    }
+  ]
+}

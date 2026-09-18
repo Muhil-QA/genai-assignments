@@ -1,0 +1,271 @@
+{
+  "summary": {
+    "totalTestCases": 7,
+    "positive": 1,
+    "negative": 1,
+    "boundary": 1,
+    "authentication": 1,
+    "authorization": 1,
+    "validation": 1,
+    "error-handling": 1,
+    "standardTestTypes": {
+      "Smoke": 1,
+      "Sanity": 0,
+      "Regression": 6,
+      "Functional": 7,
+      "Integration": 0,
+      "End-to-End": 0,
+      "API/Contract": 7,
+      "Validation": 1,
+      "Negative": 1,
+      "Boundary": 1,
+      "Security": 2,
+      "Performance": 0,
+      "Compatibility": 0,
+      "Usability": 0,
+      "Exploratory": 0
+    }
+  },
+  "testCases": [
+    {
+      "testCaseId": "TC-API-001",
+      "operationId": "addPet",
+      "endpoint": "/pet",
+      "method": "POST",
+      "category": "positive",
+      "title": "Add a new pet with valid data",
+      "priority": "High",
+      "preconditions": [
+        "API is reachable"
+      ],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "pathParameters": {},
+      "queryParameters": {},
+      "requestBody": {
+        "id": 123,
+        "category": {
+          "id": 1,
+          "name": "Dogs"
+        },
+        "name": "Rex",
+        "photoUrls": [
+          "http://example.com/photo.jpg"
+        ],
+        "tags": [
+          {
+            "id": 1,
+            "name": "friendly"
+          }
+        ],
+        "status": "available"
+      },
+      "steps": [
+        "Send POST request to /pet with body"
+      ],
+      "expectedStatusCode": 405,
+      "expectedResult": "Response indicates successful operation as defined",
+      "sourceReferences": [
+        "paths./pet.post"
+      ],
+      "standardTestTypes": [
+        "Smoke",
+        "Functional",
+        "API/Contract"
+      ]
+    },
+    {
+      "testCaseId": "TC-API-002",
+      "operationId": "getPetById",
+      "endpoint": "/pet/{petId}",
+      "method": "GET",
+      "category": "negative",
+      "title": "Get pet with non‑numeric ID",
+      "priority": "High",
+      "preconditions": [
+        "API is reachable"
+      ],
+      "headers": {},
+      "pathParameters": {
+        "petId": "abc"
+      },
+      "queryParameters": {},
+      "steps": [
+        "Send GET request to /pet/abc"
+      ],
+      "expectedStatusCode": 400,
+      "expectedResult": "API returns HTTP 400 for invalid ID",
+      "sourceReferences": [
+        "paths./pet/{petId}.get"
+      ],
+      "standardTestTypes": [
+        "Regression",
+        "Functional",
+        "API/Contract",
+        "Negative"
+      ]
+    },
+    {
+      "testCaseId": "TC-API-003",
+      "operationId": "findPetsByStatus",
+      "endpoint": "/pet/findByStatus",
+      "method": "GET",
+      "category": "boundary",
+      "title": "Find pets with empty status list",
+      "priority": "Medium",
+      "preconditions": [
+        "API is reachable"
+      ],
+      "headers": {},
+      "pathParameters": {},
+      "queryParameters": {
+        "status": ""
+      },
+      "steps": [
+        "Send GET request to /pet/findByStatus with empty status"
+      ],
+      "expectedStatusCode": 400,
+      "expectedResult": "API returns HTTP 400 for invalid status value",
+      "sourceReferences": [
+        "paths./pet/findByStatus.get"
+      ],
+      "standardTestTypes": [
+        "Regression",
+        "Functional",
+        "API/Contract",
+        "Boundary"
+      ]
+    },
+    {
+      "testCaseId": "TC-API-004",
+      "operationId": "loginUser",
+      "endpoint": "/user/login",
+      "method": "GET",
+      "category": "authentication",
+      "title": "Login with valid credentials",
+      "priority": "High",
+      "preconditions": [
+        "User exists"
+      ],
+      "headers": {},
+      "pathParameters": {},
+      "queryParameters": {
+        "username": "user1",
+        "password": "pass123"
+      },
+      "steps": [
+        "Send GET request to /user/login with credentials"
+      ],
+      "expectedStatusCode": 200,
+      "expectedResult": "API returns HTTP 200 and authentication token in headers",
+      "sourceReferences": [
+        "paths./user/login.get"
+      ],
+      "standardTestTypes": [
+        "Regression",
+        "Functional",
+        "API/Contract",
+        "Security"
+      ]
+    },
+    {
+      "testCaseId": "TC-API-005",
+      "operationId": "deletePet",
+      "endpoint": "/pet/{petId}",
+      "method": "DELETE",
+      "category": "authorization",
+      "title": "Delete pet without API key",
+      "priority": "High",
+      "preconditions": [
+        "Pet with ID 10 exists"
+      ],
+      "headers": {},
+      "pathParameters": {
+        "petId": 10
+      },
+      "queryParameters": {},
+      "steps": [
+        "Send DELETE request to /pet/10 without api_key header"
+      ],
+      "expectedStatusCode": 401,
+      "expectedResult": "API denies request due to missing authorization",
+      "sourceReferences": [
+        "paths./pet/{petId}.delete"
+      ],
+      "standardTestTypes": [
+        "Regression",
+        "Functional",
+        "API/Contract",
+        "Security"
+      ]
+    },
+    {
+      "testCaseId": "TC-API-006",
+      "operationId": "placeOrder",
+      "endpoint": "/store/order",
+      "method": "POST",
+      "category": "validation",
+      "title": "Place order with missing required fields",
+      "priority": "Medium",
+      "preconditions": [
+        "API is reachable"
+      ],
+      "headers": {
+        "Content-Type": "application/json"
+      },
+      "pathParameters": {},
+      "queryParameters": {},
+      "requestBody": {
+        "petId": 0,
+        "quantity": -1
+      },
+      "steps": [
+        "Send POST request to /store/order with incomplete body"
+      ],
+      "expectedStatusCode": 400,
+      "expectedResult": "API returns HTTP 400 for validation error",
+      "sourceReferences": [
+        "paths./store/order.post"
+      ],
+      "standardTestTypes": [
+        "Regression",
+        "Functional",
+        "API/Contract",
+        "Validation"
+      ]
+    },
+    {
+      "testCaseId": "TC-API-007",
+      "operationId": "uploadFile",
+      "endpoint": "/pet/{petId}/uploadImage",
+      "method": "POST",
+      "category": "error-handling",
+      "title": "Upload image with unsupported file type",
+      "priority": "Low",
+      "preconditions": [
+        "Pet with ID 5 exists"
+      ],
+      "headers": {
+        "Content-Type": "multipart/form-data"
+      },
+      "pathParameters": {
+        "petId": 5
+      },
+      "queryParameters": {},
+      "steps": [
+        "Send POST multipart request with .exe file"
+      ],
+      "expectedStatusCode": 200,
+      "expectedResult": "API responds with successful operation but handles unsupported file gracefully",
+      "sourceReferences": [
+        "paths./pet/{petId}/uploadImage.post"
+      ],
+      "standardTestTypes": [
+        "Regression",
+        "Functional",
+        "API/Contract"
+      ]
+    }
+  ]
+}

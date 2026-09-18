@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Codeboard Sentinel AI enterprise GitHub code reviewer">
+  <title>Codeboard Sentinel AI | Enterprise GitHub Code Reviewer</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <div class="app-shell">
+    <header class="site-header">
+      <a class="brand" href="#top" aria-label="Codeboard Technology home">
+        <svg class="brand-mark" viewBox="0 0 64 48" role="img" aria-label="Codeboard angle bar logo">
+          <path d="M25 8 9 24l16 16M39 8l16 16-16 16M33 7 29 41" fill="none" stroke="currentColor" stroke-width="5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+        <span class="brand-copy">
+          <strong>Codeboard</strong>
+          <small>Technology</small>
+        </span>
+      </a>
+
+      <div class="header-divider" aria-hidden="true"></div>
+      <span class="product-badge">Sentinel AI</span>
+
+      <div class="header-statuses">
+        <span class="status-pill"><span class="status-dot"></span>n8n Engine: Connected</span>
+        <span class="status-pill model-pill"><span class="status-dot"></span>Agent Model: Groq / Llama-3</span>
+        <span class="environment-tag">Enterprise QA Edition</span>
+      </div>
+    </header>
+
+    <main id="top" class="main-content">
+      <section class="page-intro" aria-labelledby="page-title">
+        <p class="eyebrow"><span></span> Automated review intelligence</p>
+        <h1 id="page-title">Enterprise GitHub<br><em>Code Reviewer</em></h1>
+        <p class="intro-copy">Ship with confidence. Sentinel AI turns every pull request into a precise, actionable engineering report.</p>
+      </section>
+
+      <section class="review-grid" aria-label="Code review workspace">
+        <article class="control-panel panel">
+          <div class="panel-heading">
+            <div>
+              <span class="section-kicker">01 / Configure</span>
+              <h2>Review parameters</h2>
+            </div>
+            <span class="panel-icon" aria-hidden="true">↗</span>
+          </div>
+
+          <form class="review-form" id="review-form">
+            <label for="repository-url">GitHub PR / Repository URL</label>
+            <div class="input-wrap">
+              <span class="input-prefix" aria-hidden="true">↗</span>
+              <input id="repository-url" name="repository-url" type="url" placeholder="https://github.com/org/repo/pull/1">
+            </div>
+
+            <label for="review-scope">Review scope</label>
+            <div class="select-wrap">
+              <select id="review-scope" name="review-scope">
+                <option>Full OWASP Security Audit</option>
+                <option>Code Quality &amp; Cleanliness</option>
+                <option>Performance &amp; Memory Optimization</option>
+              </select>
+            </div>
+
+            <div class="label-row">
+              <label for="code-snippet">Raw code snippet</label>
+              <span>Optional fallback</span>
+            </div>
+            <textarea id="code-snippet" name="code-snippet" rows="7" placeholder="Paste a code excerpt for a focused review..."></textarea>
+
+            <div class="validation-banner" id="validation-banner" role="alert" aria-live="polite"></div>
+
+            <button class="primary-action" id="run-analysis" type="submit">
+              <span class="action-label">Run Sentinel Analysis</span>
+              <span class="action-arrow" aria-hidden="true">→</span>
+            </button>
+            <p class="form-note"><span aria-hidden="true">⌁</span> Analysis is processed through your secure n8n workflow.</p>
+          </form>
+        </article>
+
+        <article class="review-canvas panel">
+          <div class="panel-heading canvas-heading">
+            <div>
+              <span class="section-kicker">02 / Review canvas</span>
+              <h2>Analysis report</h2>
+            </div>
+            <div class="canvas-header-meta">
+              <span class="completion-badge" id="completion-badge">REVIEW COMPLETE</span>
+              <span class="report-id">REPORT / —</span>
+            </div>
+          </div>
+
+          <div class="metric-grid" aria-label="Review summary metrics">
+            <div class="metric-card"><span>Code Health Score</span><strong id="health-score">—</strong><small>Awaiting review</small></div>
+            <div class="metric-card"><span>Security Risks</span><strong id="security-risks">—</strong><small>Awaiting review</small></div>
+            <div class="metric-card"><span>Performance Rating</span><strong id="performance-rating">—</strong><small>Awaiting review</small></div>
+          </div>
+
+          <div class="notice-banner" id="notice-banner" role="status" aria-live="polite"></div>
+
+          <div class="output-action-bar">
+            <div class="health-badge"><span>Overall Health Score</span><strong id="overall-health-score">—</strong></div>
+            <div class="copy-control">
+              <button class="copy-button" id="copy-results" type="button" disabled aria-describedby="copy-toast"><span aria-hidden="true">⧉</span> Copy Results to Clipboard</button>
+              <span class="copy-toast" id="copy-toast" role="status" aria-live="polite">Copied!</span>
+            </div>
+          </div>
+
+          <div class="review-output" id="review-output" aria-live="polite">
+            <div class="empty-state">
+              <div class="terminal-icon" aria-hidden="true"><span>&gt;_</span></div>
+              <span class="empty-label">Awaiting input</span>
+              <h3>Waiting for code input to review...</h3>
+              <p>Provide a pull request URL or paste a code snippet to begin your secure analysis.</p>
+            </div>
+          </div>
+
+          <div class="state-preview" aria-label="Available system states">
+            <div class="state-row state-loading"><span class="state-indicator"></span><strong>Loading</strong><span>Queued for analysis</span></div>
+            <div class="state-row state-success"><span class="state-indicator"></span><strong>Success</strong><span>Report ready</span></div>
+            <div class="state-row state-error"><span class="state-indicator"></span><strong>Validation error</strong><span>Input needs attention</span></div>
+            <div class="state-row state-connection"><span class="state-indicator"></span><strong>Connection error</strong><span>System unavailable</span></div>
+          </div>
+        </article>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 Codeboard Technology Ltd. All Rights Reserved</p>
+      <div class="footer-meta">
+        <span class="version">v2.4.0-release</span>
+        <nav aria-label="Footer navigation">
+          <a href="#security">Security Standards</a>
+          <a href="#policy">QA Policy</a>
+          <a href="#api">API Docs</a>
+        </nav>
+      </div>
+    </footer>
+  </div>
+</body>
+</html>

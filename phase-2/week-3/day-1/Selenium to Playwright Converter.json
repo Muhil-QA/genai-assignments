@@ -1,0 +1,688 @@
+{
+  "name": "Selenium to Playwright Converter",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "AI GitHub Code Converter",
+        "formDescription": "Enter a GitHub Repository or File URL. The AI will convert the Selenium source code to Playwright.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Selenium Github File URL",
+              "placeholder": "https://github.com/"
+            },
+            {
+              "fieldLabel": "Target_Branch",
+              "defaultValue": "main"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.6,
+      "position": [
+        -768,
+        -272
+      ],
+      "id": "3567df82-2f0b-48eb-aea9-3bd0641288d4",
+      "name": "On form submission",
+      "webhookId": "67289dc8-1948-4475-900a-a1e1036a4850"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "04398d9e-823b-4ac9-8014-f8cb9e4bc2b2",
+              "name": "Owner",
+              "value": "={{ $json['Selenium Github File URL'].split('/')[3] }}",
+              "type": "string"
+            },
+            {
+              "id": "b0e25644-f529-47fd-90c9-1f31d3c14812",
+              "name": "Branch",
+              "value": "={{ $json.Target_Branch }}",
+              "type": "string"
+            },
+            {
+              "id": "f6331b1d-94b7-45ef-b408-5040cadbcc24",
+              "name": "Repo",
+              "value": "={{ $json['Selenium Github File URL'].split('/')[4].replaceAll('.git','') }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.5,
+      "position": [
+        -608,
+        -272
+      ],
+      "id": "323df60f-87e4-4cf1-b1f1-96038c5558fd",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $json.Owner }}/{{ $json.Repo }}/git/trees/{{$json.Branch}}?recursive=1",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        -432,
+        -272
+      ],
+      "id": "17828a6f-a5a2-4f01-a48b-a1d0506977e6",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "tree",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        -256,
+        -272
+      ],
+      "id": "2a63a870-add7-413e-8cf6-91776d03f20e",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "f44b6b4b-2c3f-492b-bca5-b058456f3d3f",
+              "leftValue": "={{ $json.type }}",
+              "rightValue": "blob",
+              "operator": {
+                "type": "string",
+                "operation": "equals",
+                "name": "filter.operator.equals"
+              }
+            },
+            {
+              "id": "1913a3aa-ea01-4f72-a78a-67009820e565",
+              "leftValue": "={{ $json.path }}",
+              "rightValue": "java",
+              "operator": {
+                "type": "string",
+                "operation": "endsWith"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        -64,
+        -272
+      ],
+      "id": "031432cf-1992-481f-8407-6ea978bd1cef",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "9a3467d5-7fe6-4628-bdca-5cd3b2fefb9d",
+              "leftValue": "={{ $json.path }}",
+              "rightValue": "pages",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            },
+            {
+              "id": "88a2dca2-8533-4367-984c-2985cc284a6d",
+              "leftValue": "={{ $json.path }}",
+              "rightValue": "testcases",
+              "operator": {
+                "type": "string",
+                "operation": "contains"
+              }
+            }
+          ],
+          "combinator": "or"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        128,
+        -272
+      ],
+      "id": "a884719e-36df-463b-bbef-d38e43bb8206",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.path }}",
+                    "rightValue": "pages",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    },
+                    "id": "d0185a0e-82f1-4a5f-87ac-9a33fc292cdd"
+                  }
+                ],
+                "combinator": "and"
+              }
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "0c8fb20c-cf3c-4df4-ad18-9cad32bea666",
+                    "leftValue": "={{ $json.path }}",
+                    "rightValue": "testcases",
+                    "operator": {
+                      "type": "string",
+                      "operation": "contains"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        288,
+        -272
+      ],
+      "id": "181111c7-daaa-4d8c-9ff4-7d618a1c9f31",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [
+        528,
+        -432
+      ],
+      "id": "208f38b1-11eb-4ac0-a243-ed9fc0651d7d",
+      "name": "Loop Over Items"
+    },
+    {
+      "parameters": {
+        "url": "=https://api.github.com/repos/{{ $('Edit Fields').first().json.Owner }}/{{ $('Edit Fields').first().json.Repo }}/contents/{{ $json.path }}",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "githubApi",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3.raw"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.5,
+      "position": [
+        752,
+        -416
+      ],
+      "id": "e67933e8-b0f0-4b73-845d-3d4cda14f963",
+      "name": "HTTP Request1",
+      "credentials": {
+        "githubApi": {
+          "id": "Qho3AuoN5aO3HVfE",
+          "name": "GitHub account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $('HTTP Request1').item.json.data || $json.data }}",
+        "needsFallback": true,
+        "options": {
+          "systemMessage": "=[P - PERSONA]\nYou are a Principal Test Automation Architect with 10+ years of expertise in migrating enterprise legacy Java Selenium frameworks into modern TypeScript Playwright architectures following exact framework patterns.\n\n[C - CONTEXT]\nYou are converting legacy Java Selenium Page Objects into Playwright TypeScript classes for the SonicFramework repository.\nFramework rules to enforce:\n1. Inheritance & Constructor:\n   - Extend `PlaywrightWrapper` imported from `../helpers/playwright`.\n   - Constructor MUST accept `(page: Page, context: BrowserContext)` and call `super(page, context)`.\n2. Selectors Object Pattern:\n   - Group ALL locators inside a `private readonly selectors` object at the top of the class.\n   - For dynamic selectors parameterized by inputs, use arrow functions: `appOrItem: (appName: string) => \\`//mark[text()='${appName}']\\``.\n3. Custom Wrapper Usage (CRITICAL):\n   - NEVER use raw `page.click()` or `page.fill()`.\n   - Use wrapper methods from `PlaywrightWrapper`:\n     * `await this.click(selector, elementName, elementType)` -> e.g., `await this.click(this.selectors.applauncherIcon, \"App Launcher\", \"Button\");`\n     * `await this.type(selector, elementName, value)` -> e.g., `await this.type(this.selectors.appItemSearchField, \"Search Field\", value);`\n     * `await this.validateElementVisibility(selector, elementName)` -> for visibility checks.\n     * `await this.waitSelector(selector)` -> for dynamic waits.\n4. Return Rules:\n   - Do NOT add `return this` or `return new NextPage()` in converted TypeScript methods.\n   - Retain the exact original Java class name for the TypeScript class.\n\n[I - INSTRUCTIONS]\n1. Parse the incoming Java Selenium Page Object class.\n2. Extract all Selenium locators into the `selectors` object structure (including arrow functions for dynamic parameters).\n3. Replace Selenium actions with exact calls to `PlaywrightWrapper` helpers using descriptive labels for elementName and elementType.\n4. Mark every method `async` and `await` every wrapper operation.\n5. Omit all `reportStep` and page-chaining `return` statements.\n\n[O - OUTPUT FORMAT]\n- Output ONLY valid TypeScript code inside ```typescript ... ``` blocks.\n- Do NOT include any intro, outro, or explanation outside the code block.\n\n[T - TONE]\nStrict, highly disciplined, production-grade enterprise software architecture tone.\n\n[Strict]\n\"Be concise. Output only the pure TypeScript Playwright code without any introductory or concluding conversational explanations.\""
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3.1,
+      "position": [
+        944,
+        -416
+      ],
+      "id": "bb573f11-f295-4bae-a222-43e18b845e8d",
+      "name": "AI Agent",
+      "retryOnFail": true,
+      "waitBetweenTries": 5000
+    },
+    {
+      "parameters": {
+        "operation": "toText",
+        "sourceProperty": "output",
+        "options": {
+          "fileName": "={{ $('Loop Over Items').item.json.path.split('/').pop().replace('.java', '') }}.txt"
+        }
+      },
+      "type": "n8n-nodes-base.convertToFile",
+      "typeVersion": 1.1,
+      "position": [
+        1264,
+        -416
+      ],
+      "id": "a5ecc306-845f-437c-8826-f7fd6f83f26f",
+      "name": "Convert to File"
+    },
+    {
+      "parameters": {
+        "amount": 35
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        1536,
+        -416
+      ],
+      "id": "b930d3df-8393-4278-be69-b7b3b45ad005",
+      "name": "Wait",
+      "webhookId": "cbcc12c7-c5f2-4ee2-9708-516ce0b24352"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        912,
+        -768
+      ],
+      "id": "7709053d-ba36-4cb8-ae75-8affb26eb2df",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "workflowId": {
+          "__rl": true,
+          "value": "EgePDIw9L0tjlAVX",
+          "mode": "list",
+          "cachedResultUrl": "/workflow/EgePDIw9L0tjlAVX",
+          "cachedResultName": "Sub flow Testcase converter"
+        },
+        "workflowInputs": {
+          "mappingMode": "defineBelow",
+          "value": {},
+          "matchingColumns": [],
+          "schema": [],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": true
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.executeWorkflow",
+      "typeVersion": 1.3,
+      "position": [
+        1168,
+        -32
+      ],
+      "id": "05e31b21-f1fa-4988-863d-00b9289f419d",
+      "name": "Call 'Sub flow Testcase converter'"
+    },
+    {
+      "parameters": {
+        "jsCode": "const inputItems = $input.all();\n\nconst mergedItem = {\n  json: {},\n  binary: {},\n};\n\nlet fileIndex = 1;\n\ninputItems.forEach((item) => {\n  if (item.binary) {\n    Object.keys(item.binary).forEach((key) => {\n      // Assign each binary file to a unique dynamic key (file1, file2, ..., file6)\n      mergedItem.binary[`file${fileIndex}`] = item.binary[key];\n      fileIndex++;\n    });\n  }\n});\n\nreturn [mergedItem];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1168,
+        -768
+      ],
+      "id": "218667a6-7799-49f5-944f-0e513e58a2e2",
+      "name": "Code in JavaScript"
+    },
+    {
+      "parameters": {
+        "operation": "compress",
+        "binaryPropertyName": "={{ Object.keys($binary).join(\",\") }}",
+        "fileName": "playwright_pages.zip"
+      },
+      "type": "n8n-nodes-base.compression",
+      "typeVersion": 1.1,
+      "position": [
+        1392,
+        -768
+      ],
+      "id": "dea39474-eb9c-4afe-bac2-cba587a7d0aa",
+      "name": "Compression"
+    },
+    {
+      "parameters": {
+        "operation": "completion",
+        "completionTitle": "Playwright code conversion completed",
+        "completionMessage": "All Pages and testcases have been converted to playwright. Check the logs in your current n8n workflow execution to download the files",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.form",
+      "typeVersion": 2.5,
+      "position": [
+        1600,
+        -768
+      ],
+      "id": "213932aa-7559-49ba-a1b3-9868cdc152a3",
+      "name": "Form",
+      "webhookId": "b364c7cf-a098-45b0-be99-ac0f7dbc742e"
+    },
+    {
+      "parameters": {
+        "model": "openai/gpt-oss-20b",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGroq",
+      "typeVersion": 1,
+      "position": [
+        800,
+        -208
+      ],
+      "id": "65e042ff-715f-40f2-a122-d9ebf8a72a38",
+      "name": "Groq Chat Model",
+      "credentials": {
+        "groqApi": {
+          "id": "7irAL28yZX9ArTli",
+          "name": "Groq account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1.1,
+      "position": [
+        976,
+        -192
+      ],
+      "id": "9458aad7-0002-4300-8b01-f202fe57ed43",
+      "name": "Google Gemini Chat Model1",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "16UW3jgz4XnlsvWq",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Call 'Sub flow Testcase converter'",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Loop Over Items": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "HTTP Request1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request1": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Convert to File",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Convert to File": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "Loop Over Items",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Call 'Sub flow Testcase converter'": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Code in JavaScript",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Code in JavaScript": {
+      "main": [
+        [
+          {
+            "node": "Compression",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compression": {
+      "main": [
+        [
+          {
+            "node": "Form",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Groq Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model1": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 1
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "d2e29577-9e9f-4897-af56-1d05cf1c1889",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "0d6f26d858fe2a71f24d315ae737850abe430614bcc8b7de86dd4a63bcdb7656"
+  },
+  "nodeGroups": [],
+  "id": "ukMAfDmX2iWfJGpm",
+  "tags": []
+}
