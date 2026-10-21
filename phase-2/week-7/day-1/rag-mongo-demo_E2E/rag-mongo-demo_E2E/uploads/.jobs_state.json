@@ -1,0 +1,33 @@
+{
+  "job-1792605478602-20ft4po17": {
+    "id": "job-1792605478602-20ft4po17",
+    "files": [
+      "converted-1792605458810.json"
+    ],
+    "jobType": "testcases",
+    "conversationId": "2e3535a3-e9b3-4ef8-aaf9-d23239a67c81",
+    "executionId": "7584c6b5-1779-4aad-bbb3-7d6cf4e72354",
+    "status": "completed",
+    "progress": 1,
+    "total": 1,
+    "results": [
+      {
+        "file": "converted-1792605458810.json",
+        "status": "completed",
+        "inserted": 1,
+        "failed": 0,
+        "output": "Processed 1 items: 1 inserted, 0 failed"
+      }
+    ],
+    "startTime": "2026-10-21T17:57:58.603Z",
+    "currentFile": "converted-1792605458810.json",
+    "message": "Successfully processed 1 items across 1 file(s)!",
+    "progressPercent": 100,
+    "endTime": "2026-10-21T17:58:03.622Z",
+    "totalInserted": 1,
+    "totalFailed": 0,
+    "historyPersistenceWarning": null,
+    "totalCost": 0.000017500000000000002,
+    "totalTokens": 175
+  }
+}

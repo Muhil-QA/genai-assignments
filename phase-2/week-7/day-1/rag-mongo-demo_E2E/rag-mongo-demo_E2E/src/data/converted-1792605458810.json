@@ -1,0 +1,20 @@
+[
+  {
+    "module": "User Authentications",
+    "id": "TC-AUTH-005",
+    "preRequisites": "1. Infras URL is accessible.\r\n2. Valid user account exists in DB.",
+    "title": "Verify Successful User Login with Valid Credentials to infras",
+    "description": "Ensure that a registered user can log into the infras portal using valid email and password.",
+    "steps": "1. Navigate to infras login page.\r\n2. Enter valid email address.\r\n3. Enter valid password.\r\n4. Click 'Sign In' button.",
+    "expectedResults": "1. User is successfully authenticated.\r\n2. Redirected to Infras User Dashboard.\r\n3. Welcome toast notification displayed.",
+    "automationManual": "Automation",
+    "priority": "High",
+    "createdBy": "QA Engineer",
+    "createdDate": 46316,
+    "lastModifiedDate": 46316,
+    "linkedStories": "",
+    "risk": "Low",
+    "version": "v1.0",
+    "type": "Functional"
+  }
+]
