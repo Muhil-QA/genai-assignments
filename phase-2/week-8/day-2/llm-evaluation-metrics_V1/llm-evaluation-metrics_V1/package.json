@@ -1,0 +1,33 @@
+{
+  "name": "ragas-evaluation-system",
+  "version": "1.0.0",
+  "description": "RAGAS Evaluation System - Frontend + Backend + Python",
+  "private": true,
+  "scripts": {
+    "setup:workspaces": "npm install && npm install --prefix frontend && npm install --prefix backend",
+    "postinstall": "npm install --prefix frontend && npm install --prefix backend",
+    "dev:frontend": "cd frontend && npm run dev",
+    "dev:backend": "cd backend && npm run dev",
+    "dev:python": "node run-python-server.js",
+    "dev": "npx concurrently --names \"frontend,backend,python\" --prefix-colors \"cyan,green,yellow\" \"npm run dev:frontend\" \"npm run dev:backend\" \"npm run dev:python\"",
+    "build": "npm run build:frontend && npm run build:backend",
+    "build:frontend": "cd frontend && npm run build",
+    "build:backend": "cd backend && npm run build",
+    "start": "npm run start:backend",
+    "start:frontend": "cd frontend && npm run preview",
+    "start:backend": "cd backend && npm start",
+    "start:python": "node run-python-server.js"
+  
+  },
+  "dependencies": {
+    "axios": "^1.7.2",
+    "cors": "^2.8.5"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.19",
+    "@types/dotenv": "^6.1.1",
+    "@types/express": "^5.0.6",
+    "concurrently": "^8.2.2",
+    "rimraf": "^5.0.5"
+  }
+}
