@@ -1,0 +1,27 @@
+version: 1.0.0
+documents:
+  - documentId: DOC-101
+    tenantId: TENANT-A
+    classification: CONFIDENTIAL
+    allowedRoles:
+      - claims-agent
+    status: ACTIVE
+  - documentId: DOC-102
+    tenantId: TENANT-A
+    classification: CONFIDENTIAL
+    allowedRoles:
+      - claims-agent
+    status: DELETED
+  - documentId: DOC-103
+    tenantId: TENANT-A
+    classification: CONFIDENTIAL
+    allowedRoles:
+      - claims-agent
+    status: ACTIVE
+    expiresAt: "2020-01-01T00:00:00.000Z"
+  - documentId: DOC-201
+    tenantId: TENANT-B
+    classification: CONFIDENTIAL
+    allowedRoles:
+      - claims-agent
+    status: ACTIVE

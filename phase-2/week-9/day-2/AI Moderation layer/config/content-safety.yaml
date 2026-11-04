@@ -1,0 +1,23 @@
+version: 1.0.0
+analysisContextAction: WARN
+rules:
+  - id: CONTENT-SAFETY-HARASSMENT-001
+    category: HARASSMENT
+    severity: MEDIUM
+    recommendedAction: SAFE_RESPONSE
+    pattern: '\byou(?: are|''re)\s+(?:an?\s+)?(?:idiot|stupid|worthless|pathetic|useless)\b'
+  - id: CONTENT-SAFETY-HATE-001
+    category: HATE
+    severity: HIGH
+    recommendedAction: SAFE_RESPONSE
+    pattern: '\b(?:all|every)\s+(?:members of\s+)?(?:a\s+)?(?:protected[- ]group|women|men|immigrants|muslims|jews|christians|hindus|disabled people|older people)\b.{0,40}\b(?:inferior|evil|criminals|dangerous|should be harmed|should be removed)\b'
+  - id: CONTENT-SAFETY-BIAS-001
+    category: BIAS
+    severity: LOW
+    recommendedAction: WARN
+    pattern: '\b(?:women|men|immigrants|disabled people|older people)\s+(?:are|cannot|can''t)\s+(?:naturally\s+)?(?:worse|better|less capable|more suited)\b'
+  - id: CONTENT-SAFETY-THREAT-001
+    category: THREAT
+    severity: HIGH
+    recommendedAction: BLOCK
+    pattern: '\b(?:i will|i''m going to|we will|we''re going to)\s+(?:hurt|kill|attack)\s+(?:you|them|him|her|that person)\b'

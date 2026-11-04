@@ -1,0 +1,73 @@
+version: 1.0.0
+idempotencyWindowMs: 600000
+maximumTrackedActionIds: 10000
+tools:
+  - tool: searchKnowledge
+    action: search
+    allowedRoles:
+      - user
+      - support-agent
+    risk: LOW
+    approvalRequired: false
+    parameters:
+      required:
+        - query
+      properties:
+        query:
+          type: string
+          maximumLength: 1000
+  - tool: email
+    action: send
+    allowedRoles:
+      - support-agent
+    risk: MEDIUM
+    approvalRequired: false
+    allowedRecipientDomains:
+      - example.com
+    parameters:
+      required:
+        - recipient
+        - templateId
+      properties:
+        recipient:
+          type: email
+        templateId:
+          type: identifier
+          maximumLength: 64
+  - tool: deleteCustomer
+    action: delete
+    allowedRoles:
+      - admin
+    risk: HIGH
+    approvalRequired: true
+    tenantScopedResourceArgument: customerId
+    parameters:
+      required:
+        - customerId
+      properties:
+        customerId:
+          type: identifier
+          maximumLength: 64
+  - tool: deployProduction
+    action: deploy
+    allowedRoles:
+      - release-manager
+    risk: CRITICAL
+    approvalRequired: true
+    parameters:
+      required:
+        - environment
+        - version
+      properties:
+        environment:
+          type: enum
+          values:
+            - production
+        version:
+          type: string
+          maximumLength: 64
+resources:
+  - tool: deleteCustomer
+    action: delete
+    resourceId: CUST-101
+    tenantId: TENANT-A

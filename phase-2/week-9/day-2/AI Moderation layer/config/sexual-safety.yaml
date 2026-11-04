@@ -1,0 +1,6 @@
+version: 1.0.0
+adultContentAction: WARN
+childSafety:
+  fixture: TEST_FIXTURE_CHILD_SAFETY_CATEGORY
+  ruleId: CHILD-SAFETY-SYNTHETIC-FIXTURE-001
+  decision: BLOCK

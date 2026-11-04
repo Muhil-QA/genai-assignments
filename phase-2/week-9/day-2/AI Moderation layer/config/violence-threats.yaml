@@ -1,0 +1,26 @@
+version: 1.0.0
+rules:
+  - id: VIOLENCE-HISTORICAL-DESCRIPTIVE-001
+    category: VIOLENCE
+    severity: LOW
+    context: DESCRIPTIVE
+    decision: ALLOW
+    pattern: '\b(?:historical|history|news report|documentary|academic discussion|reported in the news)\b.{0,100}\b(?:war|attack|violence|terrorist incident|bombing)\b'
+  - id: VIOLENCE-GRAPHIC-DESCRIPTIVE-001
+    category: VIOLENCE
+    severity: MEDIUM
+    context: GRAPHIC
+    decision: WARN
+    pattern: '\b(?:graphic|gory|gruesome)\b.{0,80}\b(?:violence|injuries|wounds|attack)\b'
+  - id: VIOLENCE-CREDIBLE-THREAT-001
+    category: THREAT
+    severity: HIGH
+    context: CREDIBLE_THREAT
+    decision: ESCALATE
+    pattern: '\b(?:i will|i''m going to|we will|we''re going to)\s+(?:hurt|kill|attack|shoot|stab)\s+(?:you|him|her|them|my coworker|my neighbor|that person|[A-Z][a-z]{2,})\b'
+  - id: TERRORISM-OPERATIONAL-SUPPORT-001
+    category: TERRORISM
+    severity: HIGH
+    context: OPERATIONAL_SUPPORT
+    decision: BLOCK
+    pattern: '\b(?:help me|how do i|steps to|instructions for|planning to)\b.{0,100}\b(?:support|join|recruit for|fund|coordinate|carry out)\b.{0,80}\b(?:terrorist attack|terrorism|violent extremist group|extremist attack)\b'

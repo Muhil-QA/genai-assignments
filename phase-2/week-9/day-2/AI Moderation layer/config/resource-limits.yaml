@@ -1,0 +1,15 @@
+version: 1.0.0
+requestBodyLimitBytes: 65536
+rateLimit:
+  requests: 60
+  windowMs: 60000
+  identity: applicationId
+  maximumTrackedKeys: 10000
+tokenLimit:
+  encoding: cl100k_base
+  maxInputTokens: 20000
+requestTimeoutMs: 30000
+maxConcurrentRequests: 20
+fileUpload:
+  maximumFileSizeBytes: 10485760
+  maximumFiles: 1

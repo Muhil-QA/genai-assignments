@@ -1,0 +1,5 @@
+version: 1.0.0
+maximumEncodedPayloadBytes: 4096
+maximumEncodedCandidates: 8
+minimumBase64Characters: 32
+minimumHexCharacters: 32

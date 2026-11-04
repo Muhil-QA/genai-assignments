@@ -1,0 +1,8 @@
+version: 1.0.0
+priority:
+  - BLOCK
+  - ESCALATE
+  - SAFE_RESPONSE
+  - MASK
+  - WARN
+  - ALLOW

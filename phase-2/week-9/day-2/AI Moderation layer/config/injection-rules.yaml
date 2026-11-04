@@ -1,0 +1,33 @@
+version: 1.0.0
+warnThreshold: 30
+blockThreshold: 70
+maximumRiskScore: 100
+rules:
+  - id: INJECTION-OVERRIDE-001
+    weight: 45
+    pattern: >-
+      \b(?:ignore|disregard|override|forget)\s+(?:all\s+)?(?:the\s+)?(?:previous|prior|above|system|developer)\s+(?:instructions?|rules?|prompts?)\b
+  - id: INJECTION-REVEAL-001
+    weight: 40
+    pattern: >-
+      \b(?:reveal|show|print|repeat|disclose|output)\b.{0,50}\b(?:system|developer|hidden)\s+(?:prompt|instructions?|message)\b
+  - id: INJECTION-EXFILTRATE-001
+    weight: 40
+    pattern: >-
+      \b(?:reveal|show|print|send|exfiltrate|output|disclose)\b.{0,50}\b(?:secrets?|credentials?|api[_ -]?keys?|passwords?|tokens?)\b
+  - id: INJECTION-ROLE-001
+    weight: 30
+    pattern: >-
+      \b(?:act|pretend|roleplay)\s+(?:as|like)\s+(?:an?\s+)?(?:unrestricted|uncensored|developer|system|administrator|admin)\b
+  - id: INJECTION-TOOL-MISUSE-001
+    weight: 35
+    pattern: >-
+      \b(?:use|call|invoke|run|execute)\s+(?:the\s+)?(?:shell|terminal|browser|tool|function)\b.{0,60}\b(?:delete|exfiltrate|send|upload|execute|transfer|export)\b
+  - id: INJECTION-HIDDEN-CONTEXT-001
+    weight: 25
+    pattern: >-
+      \b(?:hidden|quoted|embedded|attached)\s+(?:text|content|document|instructions?)\b.{0,60}\b(?:follow|execute|obey|treat)\b
+  - id: INJECTION-SAFETY-BYPASS-001
+    weight: 35
+    pattern: >-
+      \b(?:bypass|disable|circumvent|evade)\b.{0,40}\b(?:safety|guardrails?|restrictions?|policy|filters?)\b

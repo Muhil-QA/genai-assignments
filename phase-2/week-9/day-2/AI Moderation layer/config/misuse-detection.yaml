@@ -1,0 +1,47 @@
+version: 1.0.0
+rules:
+  - id: MISUSE-DEFENSIVE-AWARENESS-001
+    category: CYBER_MISUSE
+    intent: DEFENSIVE
+    requestedCapability: RECOGNITION
+    operationalDetail: GENERAL
+    authorizationContext: AUTHORIZED_OR_NOT_APPLICABLE
+    potentialHarm: LOW
+    recommendedAction: ALLOW
+    pattern: '\b(?:recognize|identify|report|protect against|defend against)\b.{0,80}\b(?:phishing|scams?|fraud|malicious messages?)\b'
+  - id: MISUSE-FRAUD-ENABLEMENT-001
+    category: FRAUD
+    intent: MALICIOUS
+    requestedCapability: DECEPTION
+    operationalDetail: OPERATIONAL
+    authorizationContext: UNAUTHORIZED
+    potentialHarm: HIGH
+    recommendedAction: BLOCK
+    pattern: '\b(?:help me|how do i|write|create|make|send)\b.{0,80}\b(?:scam|fraudulent message|phishing email)\b.{0,80}\b(?:steal|trick|deceive|defraud|credentials|money|victim)\b'
+  - id: MISUSE-CYBER-UNAUTHORIZED-001
+    category: CYBER_MISUSE
+    intent: MALICIOUS
+    requestedCapability: UNAUTHORIZED_ACCESS
+    operationalDetail: OPERATIONAL
+    authorizationContext: UNAUTHORIZED
+    potentialHarm: HIGH
+    recommendedAction: SAFE_RESPONSE
+    pattern: '\b(?:help me|how do i|show me how to|steps to)\b.{0,80}\b(?:steal credentials|break into|access without permission|access someone else''s account without permission|bypass authentication|take over someone else''s account)\b'
+  - id: MISUSE-ILLEGAL-EVASION-001
+    category: ILLEGAL_ACTIVITY
+    intent: MALICIOUS
+    requestedCapability: EVASION
+    operationalDetail: OPERATIONAL
+    authorizationContext: UNAUTHORIZED
+    potentialHarm: HIGH
+    recommendedAction: BLOCK
+    pattern: '\b(?:help me|how do i|steps to)\b.{0,80}\b(?:forge documents|evade law enforcement|hide evidence|defraud customers)\b'
+  - id: MISUSE-AUTHORIZATION-UNCLEAR-001
+    category: CYBER_MISUSE
+    intent: AMBIGUOUS
+    requestedCapability: ACCESS
+    operationalDetail: GENERAL
+    authorizationContext: UNCLEAR
+    potentialHarm: MEDIUM
+    recommendedAction: WARN
+    pattern: '\b(?:access|test|scan)\b.{0,60}\b(?:account|system|network|website)\b.{0,60}\b(?:not mine|someone else''s|without permission|no authorization)\b'

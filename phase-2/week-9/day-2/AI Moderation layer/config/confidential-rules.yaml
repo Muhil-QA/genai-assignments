@@ -1,0 +1,15 @@
+version: 1.0.0
+defaultClassification: PUBLIC
+classifications:
+  - name: PUBLIC
+    action: ALLOW
+    ruleId: CONF-PUBLIC-001
+  - name: INTERNAL
+    action: WARN
+    ruleId: CONF-INTERNAL-001
+  - name: CONFIDENTIAL
+    action: BLOCK
+    ruleId: CONF-CONFIDENTIAL-001
+  - name: RESTRICTED
+    action: BLOCK
+    ruleId: CONF-RESTRICTED-001

@@ -1,0 +1,22 @@
+version: 1.0.0
+rules:
+  - id: HARMFUL-PREVENTION-001
+    category: DANGEROUS_ACTIVITY
+    severity: LOW
+    decision: ALLOW
+    pattern: '\b(?:how to|ways to|tips for)\s+(?:safely\s+)?(?:store|handle|dispose of|prevent exposure to|avoid contact with)\b'
+  - id: HARMFUL-EMERGENCY-001
+    category: DANGEROUS_ACTIVITY
+    severity: HIGH
+    decision: SAFE_RESPONSE
+    pattern: '\b(?:accidentally|emergency|exposed to|inhaled|swallowed|ingested|spilled)\b.{0,100}\b(?:chemical|cleaner|fumes?|poison|toxic|dangerous substance|overdose)\b|\b(?:difficulty breathing|unconscious|seizure|severe bleeding|poisoning)\b'
+  - id: HARMFUL-OPERATIONAL-001
+    category: DANGEROUS_ACTIVITY
+    severity: HIGH
+    decision: BLOCK
+    pattern: '\b(?:how (?:do i|can i|to)|steps to|instructions for|tell me how to)\b.{0,100}\b(?:make|create|prepare|synthesize|weaponize|poison|harm|hurt|injure|incapacitate)\b'
+  - id: HARMFUL-AMBIGUOUS-001
+    category: DANGEROUS_ACTIVITY
+    severity: MEDIUM
+    decision: ESCALATE
+    pattern: '\b(?:how much|what amount|what dose|lethal amount|dangerous amount)\b.{0,100}\b(?:chemical|substance|medicine|medication|toxic|poison|harm)\b'

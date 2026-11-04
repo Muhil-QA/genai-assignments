@@ -1,0 +1,32 @@
+version: 1.0.0
+warnThreshold: 30
+blockThreshold: 70
+maximumRiskScore: 100
+repeatWindowMs: 600000
+repeatRiskPoints: 25
+maximumTrackedFingerprints: 10000
+rules:
+  - id: JAILBREAK-SAFETY-BYPASS-001
+    weight: 45
+    pattern: >-
+      \b(?:bypass|disable|circumvent|evade|ignore)\b.{0,50}\b(?:safety|safeguards?|restrictions?|guardrails?|policy|filters?)\b
+  - id: JAILBREAK-ROLEPLAY-001
+    weight: 35
+    pattern: >-
+      \b(?:pretend|roleplay|act)\b.{0,50}\b(?:unrestricted|uncensored|no\s+rules|without\s+(?:any\s+)?restrictions?|evil\s+assistant)\b
+  - id: JAILBREAK-HIDDEN-INSTRUCTIONS-001
+    weight: 35
+    pattern: >-
+      \b(?:reveal|show|print|repeat|disclose|output)\b.{0,50}\b(?:hidden|secret|system|developer)\s+(?:instructions?|prompt|message)\b
+  - id: JAILBREAK-REFUSAL-EVASION-001
+    weight: 30
+    pattern: >-
+      \b(?:do\s+not|don't|never)\s+(?:refuse|decline|reject)\b.{0,50}\b(?:any|my|this|future)?\s*(?:request|instruction|command)?\b
+  - id: JAILBREAK-POLICY-EVASION-001
+    weight: 35
+    pattern: >-
+      \b(?:ignore|override|forget)\b.{0,40}\b(?:your|the)\s+(?:safety\s+)?(?:policy|rules?|restrictions?|guidelines?)\b
+  - id: JAILBREAK-HYPOTHETICAL-001
+    weight: 25
+    pattern: >-
+      \b(?:for\s+fiction|hypothetically|in\s+a\s+story)\b.{0,80}\b(?:ignore|bypass|disable)\b.{0,40}\b(?:safety|restrictions?|policy|rules?)\b

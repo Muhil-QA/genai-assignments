@@ -1,0 +1,31 @@
+version: 1.0.0
+schemas:
+  - schemaId: answer-sources-v1
+    schema:
+      $schema: http://json-schema.org/draft-07/schema#
+      type: object
+      required:
+        - answer
+        - sources
+      properties:
+        answer:
+          type: string
+          maxLength: 10000
+          pattern: '^(?!.*<\s*[sS][cC][rR][iI][pP][tT]\b).*$'
+        sources:
+          type: array
+          maxItems: 100
+          items:
+            type: string
+            maxLength: 128
+      additionalProperties: false
+codeValidation:
+  maximumCodeLength: 20000
+  forbiddenPatterns:
+    - '\beval\s*\('
+    - '\bnew\s+Function\s*\('
+    - '\bchild_process\b'
+    - '\bprocess\.env\b'
+    - '\brequire\s*\(\s*["\x27](?:fs|node:fs|net|node:net|http|node:http|https|node:https)["\x27]\s*\)'
+  allowedDependencies:
+    - lodash
